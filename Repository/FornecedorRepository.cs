@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using cadastroFornecedores.Data;
@@ -50,5 +52,68 @@ namespace cadastroFornecedores.Repository
                 Database.GetInstance().CloseConnection();
             }
         }
+
+        public List<Fornecedor> ListarFornecedores()
+        {
+            var fornecedores = new List<Fornecedor>();
+
+            try
+            {
+                Database.GetInstance().OpenConnection();
+
+                string query = "SELECT * FROM fornecedores";
+                using (var cmd = new MySqlCommand(query, _connection))
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        fornecedores.Add(new Fornecedor
+                        {
+                            Id = reader.GetInt32("id"),
+                            Nome = reader.GetString("nome"),
+                            CNPJ = reader.GetString("cnpj"),
+                            Endereco = reader.GetString("endereco"),
+                            Telefone = reader.GetString("telefone"),
+                            Email = reader.GetString("email"),
+                            Reponsavel = reader.GetString("responsavel"),
+
+
+                        });
+
+
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Erro ao listar Fornecedores: " + ex.Message);
+            }
+            finally
+            {
+                Database.GetInstance().CloseConnection();
+            }
+
+            return fornecedores;
+
+        }
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     }
 }
